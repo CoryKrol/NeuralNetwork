@@ -14,6 +14,12 @@ import java.io.IOException;
  * This class parses a data file and organizes it into data structures for use
  * by the gradient descent algorithm.
  *
+ * The data is stored in a LinkedHashMap with nested ArrayLists
+ *
+ * The data is accessed using an attribute's name as a key into the LinkedHashMap and
+ * a specific data instance's value on that attribute is accessed using the instance's
+ * number as an index into the ArrayList (Starting at 0)
+ *
  * @see ArrayList
  * @see LinkedHashMap
  * @see Map
@@ -30,24 +36,45 @@ public class perceptronDataClass {
 
     // Uses Attribute names as keys and holds linked lists
     // with all data instance values for a specific attribute
-    LinkedHashMap<String, ArrayList<Integer>> dataMap;
+    private LinkedHashMap<String, ArrayList<Integer>> dataMap;
 
     // Used to hold the name of the classification attribute so
     // we don't have to iterate through the entire LinkedHashMap to get
     // a Data Instance's classification value
-    String classificationAttributeName;
+    private String classificationAttributeName;
 
     // Number of Attributes and Data Instances
-    int numOfDataInstances;
-    int numOfAttributes;
+    private int numOfDataInstances;
+    private int numOfAttributes;
 
 
-    public perceptronDataClass(String fileName) throws IOException{
+    /**
+     * A constructor which accepts a filename as an argument and Initializes
+     * the LinkedHashMap. The filename is passed as an argument to the method
+     * parseDataFile which parses the file and populates the LinkedHashMap and the
+     * nested ArrayLists with the data.
+     * @param fileName the path to a training or testing file location
+     * @throws IOException
+     */
+    perceptronDataClass(String fileName) throws IOException{
 
         dataMap = new LinkedHashMap<>();
         parseDataFile(fileName);
     }
 
+    /**
+     * This method parses a file and populates the perceptronDataClass Object's
+     * LinkedHashMap and the nested ArrayLists with data. <br>
+     *
+     * This method also counts the number of Attributes and Data Instances <br>
+     *
+     * The name of the classification attribute is stored for easy access to an instance's
+     * classification value without having to iterate through the entire LinkedHashMap each time
+     * we need it.
+     *
+     * @param fileName the path to a training or testing file location
+     * @throws IOException
+     */
     private void parseDataFile(String fileName) throws IOException{
 
         FileReader fr = null;
@@ -120,9 +147,9 @@ public class perceptronDataClass {
     }
 
     /**
-     * Used for debugging
+     * Used for debugging the file parsing algorithm
      */
-    public void printData(){
+    void printData(){
 
         // Print out attribute Names for first row
         for(Map.Entry<String, ArrayList<Integer>> entry: dataMap.entrySet()){
