@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+// TODO: Skip over empty lines in input data
 /**
  * <h1>Perceptron Data Class</h1>
  *
@@ -32,7 +33,7 @@ import java.io.IOException;
  * @since 2017-10-24
  */
 
-public class perceptronDataClass {
+class perceptronDataClass {
 
     // Uses Attribute names as keys and holds linked lists
     // with all data instance values for a specific attribute
@@ -135,6 +136,9 @@ public class perceptronDataClass {
                 line = br.readLine();
             }
 
+            // Decrement number of attributes since classification value is not considered an attribute
+            numOfAttributes--;
+
         } catch (FileNotFoundException e){
             System.out.println("Error: Filename " + fileName + " does not exist");
             System.exit(1);
@@ -145,6 +149,95 @@ public class perceptronDataClass {
                 fr.close();
         }
     }
+
+    /**
+     * Used to return an array containing the names of all of the attributes
+     *
+     * Needed in outputting updated weight values to console after each iteration
+     * @return an array containing all attribute name values
+     */
+    String[] getAttributeNameVector(){
+        String[] attributeNameVector = new String[numOfAttributes];
+
+        // Used to keep track of place in attributeNameVector
+        int i = 0;
+
+        for(Map.Entry<String, ArrayList<Integer>> entry : dataMap.entrySet()){
+            // Make sure we aren't grabbing the classification name which would cause
+            // an Array Index Out of Bounds Exception
+            if(!entry.getKey().equals(classificationAttributeName))
+                attributeNameVector[i] = entry.getKey();
+
+            i++;
+        }
+
+        return attributeNameVector;
+    }
+
+    /**
+     * Prepares an Array containing all the values of the specified data
+     * instance's attributes
+     * @param instanceIndex the index of the data instance to retrieve
+     * @return an array containing the attribute values for the data instance
+     */
+    int[] prepareDataInstanceVector(int instanceIndex){
+        int[] dataInstanceVector = new int[numOfAttributes];
+
+        // Used to keep track of which attribute we are putting in the vector;
+        int i = 0;
+
+        // Iterate through the attributes and grab the value for the specified index
+        for(Map.Entry<String, ArrayList<Integer>> entry : dataMap.entrySet()){
+
+            // Make sure we don't grab the classification value which would cause
+            // an Array Index Out of Bounds Exception
+            if(!entry.getKey().equals(classificationAttributeName))
+                dataInstanceVector[i] = entry.getValue().get(instanceIndex);
+
+            i++;
+        }
+
+        // Return the prepared vector
+        return dataInstanceVector;
+    }
+
+    /**
+     * Returns the classification value for the specified data instance
+     * @param instanceIndex the index of the data instance to retrieve
+     * @return the classification value of the specified data instance
+     */
+    int getDataClassificationValue(int instanceIndex){
+        return dataMap.get(classificationAttributeName).get(instanceIndex);
+    }
+
+    /**
+     * Getter for the name of the classification attribute
+     * TODO: May not be needed, remove if so
+     * @return a String containing the name of the classification attribute
+     */
+    String getClassificationAttributeName() {
+        return classificationAttributeName;
+    }
+
+    /**
+     * Getter for the number of data instances
+     * TODO: May not be needed, remove if so
+     * @return an integer containing the number of data instances
+     */
+    int getNumOfDataInstances() {
+        return numOfDataInstances;
+    }
+
+    /**
+     * Getter for the number of attributes
+     * TODO: May not be needed, remove if so
+     * @return an integer containing the number of attributes
+     */
+    int getNumOfAttributes() {
+        return numOfAttributes;
+    }
+
+
 
     /**
      * Used for debugging the file parsing algorithm
@@ -172,6 +265,9 @@ public class perceptronDataClass {
                     System.out.print("\n");
             }
         }
+
+        System.out.println("Training Data:\nNumber of attributes:" + numOfAttributes + " Number of data instances: " + numOfDataInstances + "\n");
+        System.out.println("Testing Data:\nNumber of attributes:" + numOfAttributes + " Number of data instances: " + numOfDataInstances + "\n");
     }
 
 }
